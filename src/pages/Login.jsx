@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { UserPlus, LogIn, Mail, Lock, User, Loader2, Chrome } from "lucide-react";
+import {
+  UserPlus,
+  LogIn,
+  Mail,
+  Lock,
+  User,
+  Loader2,
+  Chrome,
+} from "lucide-react";
 import { auth, googleProvider, db } from "../firebase";
 import {
   createUserWithEmailAndPassword,
@@ -14,20 +22,27 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", password: "" });
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   // ------------------ Email/Password Signup ------------------
   const handleSignup = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const userCred = await createUserWithEmailAndPassword(auth, form.email, form.password);
+      const userCred = await createUserWithEmailAndPassword(
+        auth,
+        form.email,
+        form.password
+      );
       const user = userCred.user;
 
+      // Inside handleSignup (after setDoc)
       await setDoc(doc(db, "users", user.uid), {
         name: form.name,
         email: form.email,
         uid: user.uid,
+        photoURL: user.photoURL || "https://i.pravatar.cc/100", // fallback avatar
         createdAt: serverTimestamp(),
       });
 
@@ -62,14 +77,16 @@ const AuthPage = () => {
 
       const ref = doc(db, "users", user.uid);
       const snap = await getDoc(ref);
-      if (!snap.exists()) {
-        await setDoc(ref, {
-          name: user.displayName,
-          email: user.email,
-          uid: user.uid,
-          createdAt: serverTimestamp(),
-        });
-      }
+    if (!snap.exists()) {
+  await setDoc(ref, {
+    name: user.displayName,
+    email: user.email,
+    uid: user.uid,
+    photoURL: user.photoURL || "https://i.pravatar.cc/100",
+    createdAt: serverTimestamp(),
+  });
+}
+
       alert("Google Sign-in successful 🚀");
     } catch (err) {
       alert(err.message);
@@ -122,7 +139,9 @@ const AuthPage = () => {
               className="flex flex-col gap-4"
             >
               <div>
-                <label className="block text-sm font-medium text-gray-600">Email</label>
+                <label className="block text-sm font-medium text-gray-600">
+                  Email
+                </label>
                 <div className="flex items-center border border-gray-300 rounded-xl px-3">
                   <Mail size={18} className="text-gray-400" />
                   <input
@@ -136,7 +155,9 @@ const AuthPage = () => {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-600">Password</label>
+                <label className="block text-sm font-medium text-gray-600">
+                  Password
+                </label>
                 <div className="flex items-center border border-gray-300 rounded-xl px-3">
                   <Lock size={18} className="text-gray-400" />
                   <input
@@ -171,7 +192,8 @@ const AuthPage = () => {
                 onClick={handleGoogleLogin}
                 className="mt-3 w-full flex justify-center items-center gap-2 border border-gray-300 py-2.5 rounded-xl hover:bg-gray-50 transition font-medium text-gray-700"
               >
-                <Chrome className="text-yellow-500" size={18} /> Continue with Google
+                <Chrome className="text-yellow-500" size={18} /> Continue with
+                Google
               </button>
             </motion.form>
           ) : (
@@ -185,7 +207,9 @@ const AuthPage = () => {
               className="flex flex-col gap-4"
             >
               <div>
-                <label className="block text-sm font-medium text-gray-600">Full Name</label>
+                <label className="block text-sm font-medium text-gray-600">
+                  Full Name
+                </label>
                 <div className="flex items-center border border-gray-300 rounded-xl px-3">
                   <User size={18} className="text-gray-400" />
                   <input
@@ -199,7 +223,9 @@ const AuthPage = () => {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-600">Email</label>
+                <label className="block text-sm font-medium text-gray-600">
+                  Email
+                </label>
                 <div className="flex items-center border border-gray-300 rounded-xl px-3">
                   <Mail size={18} className="text-gray-400" />
                   <input
@@ -213,7 +239,9 @@ const AuthPage = () => {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-600">Password</label>
+                <label className="block text-sm font-medium text-gray-600">
+                  Password
+                </label>
                 <div className="flex items-center border border-gray-300 rounded-xl px-3">
                   <Lock size={18} className="text-gray-400" />
                   <input
@@ -248,7 +276,8 @@ const AuthPage = () => {
                 onClick={handleGoogleLogin}
                 className="mt-3 w-full flex justify-center items-center gap-2 border border-gray-300 py-2.5 rounded-xl hover:bg-gray-50 transition font-medium text-gray-700"
               >
-                <Chrome className="text-yellow-500" size={18} /> Continue with Google
+                <Chrome className="text-yellow-500" size={18} /> Continue with
+                Google
               </button>
             </motion.form>
           )}
